@@ -1,0 +1,351 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #E85D24;
+    --accent2: #F2A623;
+    --dark: var(--color-background-primary);
+    --card: var(--color-background-secondary);
+    --text: var(--color-text-primary);
+    --muted: var(--color-text-secondary);
+    --border: var(--color-border-tertiary);
+    --green: #2a9d6e;
+    --blue: #1a7fcb;
+  }
+
+  body { background: transparent; font-family: 'DM Sans', sans-serif; color: var(--text); }
+
+  .app { padding: 0 0 2rem; }
+
+  .header { padding: 1.25rem 1.25rem 0.75rem; border-bottom: 0.5px solid var(--border); }
+  .header-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .header-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+  .header-sub { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .goal-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--card); border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--muted); }
+  .goal-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+  .day-tabs { display: flex; gap: 0; overflow-x: auto; border-bottom: 0.5px solid var(--border); padding: 0 1.25rem; scrollbar-width: none; }
+  .day-tabs::-webkit-scrollbar { display: none; }
+  .day-tab { flex-shrink: 0; padding: 10px 14px 8px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+  .day-tab:hover { color: var(--text); }
+  .day-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .day-tab.rest-tab.active { color: var(--muted); border-bottom-color: var(--muted); }
+  .day-badge { display: inline-block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 4px; padding: 1px 5px; border-radius: 4px; background: var(--card); }
+
+  .day-content { padding: 1rem 1.25rem; }
+
+  .day-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
+  .day-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1; }
+  .day-focus { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; margin-top: 3px; }
+  .day-meta { text-align: right; }
+  .day-sets { font-size: 11px; color: var(--muted); }
+
+  .exercises { display: flex; flex-direction: column; gap: 10px; }
+
+  .exercise-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+  .exercise-card:hover { border-color: var(--color-border-secondary); }
+  .exercise-card.expanded { border-color: var(--accent); }
+
+  .exercise-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; }
+  .exercise-img { width: 50px; height: 50px; border-radius: 6px; background: var(--dark); border: 0.5px solid var(--border); object-fit: cover; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .exercise-img svg { width: 38px; height: 38px; }
+  .exercise-info { flex: 1; min-width: 0; }
+  .exercise-name { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .exercise-sets { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .muscle-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+  .muscle-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--dark); border: 0.5px solid var(--border); color: var(--muted); }
+  .chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; flex-shrink: 0; }
+  .exercise-card.expanded .chevron { transform: rotate(180deg); }
+
+  .exercise-detail { border-top: 0.5px solid var(--border); padding: 12px 14px; display: none; }
+  .exercise-card.expanded .exercise-detail { display: block; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .detail-stat { background: var(--dark); border-radius: 6px; padding: 8px 10px; }
+  .detail-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .detail-stat-val { font-size: 16px; font-weight: 500; font-family: 'Barlow Condensed', sans-serif; margin-top: 1px; }
+  .tip-box { background: var(--dark); border-left: 2px solid var(--accent2); border-radius: 4px; padding: 8px 10px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .tip-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent2); font-weight: 500; margin-bottom: 3px; }
+
+  .muscle-diagram { position: relative; width: 100%; margin: 0 auto 1rem; }
+
+  .rest-screen { text-align: center; padding: 3rem 1rem; }
+  .rest-icon { font-size: 48px; margin-bottom: 1rem; }
+  .rest-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; }
+  .rest-tip { font-size: 13px; color: var(--muted); margin-top: 0.5rem; max-width: 260px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+  .progress-bar-wrap { background: var(--card); border-radius: 20px; height: 4px; margin: 0.5rem 0 1.25rem; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent); border-radius: 20px; transition: width 0.3s; }
+
+  .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+
+  .today-badge { background: var(--accent); color: #fff; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; }
+</style>
+
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div class="header-title">My Split</div>
+      <div class="today-badge" id="today-label">Today</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+      <div class="header-sub">Bro Split · 5 Days</div>
+      <div class="goal-chip"><div class="goal-dot"></div>Recomp · 165 lbs → lean & strong</div>
+    </div>
+  </div>
+
+  <div class="day-tabs" id="day-tabs"></div>
+
+  <div class="day-content" id="day-content"></div>
+</div>
+
+<script>
+const days = [
+  {
+    name: "Monday", short: "Mon", label: "Chest",
+    focus: "Push — Chest",
+    tip_day: "High volume, control the negative. Rest 60–90s between sets.",
+    exercises: [
+      { name: "Barbell Bench Press", sets: "4", reps: "8–10", rest: "90s", muscles: ["Chest", "Front Delt", "Triceps"],
+        tip: "Lower the bar to your lower chest with a 2-second negative. Drive through your heels.",
+        visual: "bench" },
+      { name: "Incline Dumbbell Press", sets: "3", reps: "10–12", rest: "75s", muscles: ["Upper Chest", "Front Delt"],
+        tip: "Set bench to 30–45°. Keep elbows slightly tucked for shoulder health.",
+        visual: "incline" },
+      { name: "Cable Fly (Low to High)", sets: "3", reps: "12–15", rest: "60s", muscles: ["Lower Chest"],
+        tip: "Squeeze hard at the top of each rep. Think about hugging a barrel.",
+        visual: "fly" },
+      { name: "Chest Dip", sets: "3", reps: "10–12", rest: "75s", muscles: ["Lower Chest", "Triceps"],
+        tip: "Lean forward slightly to hit chest more. Go until upper arms are parallel.",
+        visual: "dip" },
+      { name: "Machine Chest Press", sets: "2", reps: "15–20", rest: "45s", muscles: ["Chest"],
+        tip: "Burnout finisher — full range of motion, light weight.",
+        visual: "machine_press" },
+    ]
+  },
+  {
+    name: "Tuesday", short: "Tue", label: "Back",
+    focus: "Pull — Back",
+    tip_day: "Focus on lat engagement. Initiate every pull with your elbows, not your biceps.",
+    exercises: [
+      { name: "Barbell Deadlift", sets: "4", reps: "6–8", rest: "2min", muscles: ["Lower Back", "Glutes", "Hamstrings", "Traps"],
+        tip: "Hip hinge movement. Keep the bar close to your shins. Brace your core throughout.",
+        visual: "deadlift" },
+      { name: "Pull-ups / Lat Pulldown", sets: "4", reps: "8–10", rest: "90s", muscles: ["Lats", "Biceps"],
+        tip: "Drive your elbows to your hips. At the bottom, let your shoulder blades spread.",
+        visual: "pulldown" },
+      { name: "Seated Cable Row", sets: "3", reps: "10–12", rest: "75s", muscles: ["Mid Back", "Lats", "Rhomboids"],
+        tip: "Row to your lower chest. Pause at peak contraction for 1 second.",
+        visual: "row" },
+      { name: "Single-Arm Dumbbell Row", sets: "3", reps: "10–12", rest: "60s", muscles: ["Lats", "Rhomboids"],
+        tip: "Brace knee on bench. Drive your elbow up and back, not to the side.",
+        visual: "db_row" },
+      { name: "Face Pull", sets: "3", reps: "15–20", rest: "45s", muscles: ["Rear Delt", "Traps", "Rotator Cuff"],
+        tip: "Great for shoulder health and rear delts. Pull to your forehead, not your chin.",
+        visual: "facepull" },
+    ]
+  },
+  {
+    name: "Wednesday", short: "Wed", label: "Shoulders",
+    focus: "Push — Shoulders",
+    tip_day: "Shoulder day for recomp — hit all three heads. Don't skip rear delts!",
+    exercises: [
+      { name: "Seated DB Overhead Press", sets: "4", reps: "8–10", rest: "90s", muscles: ["Front Delt", "Mid Delt", "Triceps"],
+        tip: "Press dumbbells at a slight angle inward. Don't lock out at the top — keep tension.",
+        visual: "ohp" },
+      { name: "Lateral Raises", sets: "4", reps: "12–15", rest: "60s", muscles: ["Mid Delt"],
+        tip: "Use lighter weight than you think. Lead with your pinky up (like pouring a pitcher). 2-sec negative.",
+        visual: "lateral" },
+      { name: "Rear Delt Fly (Pec Deck Reverse)", sets: "3", reps: "15–20", rest: "60s", muscles: ["Rear Delt"],
+        tip: "Crucial for shoulder balance and posture. Full range of motion, no swinging.",
+        visual: "rear_delt" },
+      { name: "Arnold Press", sets: "3", reps: "10–12", rest: "75s", muscles: ["All 3 Delt Heads"],
+        tip: "Rotate dumbbells as you press — start palms facing you, end palms out at top.",
+        visual: "arnold" },
+      { name: "Cable Lateral Raise", sets: "2", reps: "15–20", rest: "45s", muscles: ["Mid Delt"],
+        tip: "Cable keeps tension through full range — great for burning out the side delts.",
+        visual: "lateral" },
+    ]
+  },
+  {
+    name: "Thursday", short: "Thu", label: "Arms",
+    focus: "Pull & Push — Arms",
+    tip_day: "Superset biceps + triceps for time efficiency and a great pump.",
+    exercises: [
+      { name: "Barbell Curl", sets: "4", reps: "8–10", rest: "75s", muscles: ["Biceps (Long Head)"],
+        tip: "Don't swing! Strict form. Try pausing at the bottom for a full stretch.",
+        visual: "bbcurl" },
+      { name: "Skull Crushers (EZ Bar)", sets: "4", reps: "10–12", rest: "75s", muscles: ["Triceps (Long Head)"],
+        tip: "Lower the bar to your forehead slowly. Press back to starting position.",
+        visual: "skull" },
+      { name: "Incline Dumbbell Curl", sets: "3", reps: "10–12", rest: "60s", muscles: ["Biceps (Long Head)"],
+        tip: "The incline angle gives the long head a better stretch — great for peak.",
+        visual: "incline_curl" },
+      { name: "Tricep Pushdown (Rope)", sets: "3", reps: "12–15", rest: "60s", muscles: ["Triceps (Lateral Head)"],
+        tip: "At full extension, spread the rope apart to maximize lateral head contraction.",
+        visual: "pushdown" },
+      { name: "Hammer Curl", sets: "3", reps: "10–12", rest: "60s", muscles: ["Brachialis", "Forearms"],
+        tip: "Neutral grip hits brachialis (forearm-bicep connector) for overall arm thickness.",
+        visual: "hammer" },
+      { name: "Overhead Tricep Extension", sets: "2", reps: "12–15", rest: "45s", muscles: ["Triceps (Long Head)"],
+        tip: "Arms overhead = long head stretched. Great for building tricep mass.",
+        visual: "overhead_tri" },
+    ]
+  },
+  {
+    name: "Friday", short: "Fri", label: "Legs",
+    focus: "Legs — Full",
+    tip_day: "Don't skip legs! Big compound movements here burn the most calories for recomp.",
+    exercises: [
+      { name: "Barbell Back Squat", sets: "4", reps: "8–10", rest: "2min", muscles: ["Quads", "Glutes", "Hamstrings"],
+        tip: "Squat to parallel or below. Keep your chest up and knees tracking your toes.",
+        visual: "squat" },
+      { name: "Romanian Deadlift", sets: "3", reps: "10–12", rest: "90s", muscles: ["Hamstrings", "Glutes"],
+        tip: "Hinge at the hips, soft bend in knees. Feel the hamstring stretch at the bottom.",
+        visual: "rdl" },
+      { name: "Leg Press", sets: "3", reps: "12–15", rest: "75s", muscles: ["Quads", "Glutes"],
+        tip: "Wide, high foot placement hits glutes. Close, low placement hits quads more.",
+        visual: "legpress" },
+      { name: "Leg Curl (Machine)", sets: "3", reps: "12–15", rest: "60s", muscles: ["Hamstrings"],
+        tip: "Full stretch at the bottom, hard contraction at the top. 2-second hold.",
+        visual: "legcurl" },
+      { name: "Standing Calf Raise", sets: "4", reps: "15–20", rest: "45s", muscles: ["Calves"],
+        tip: "Pause at the top and bottom of each rep. Full range for growth.",
+        visual: "calf" },
+    ]
+  },
+  {
+    name: "Saturday", short: "Sat", label: "Rest", rest: true,
+    focus: "Active Recovery"
+  },
+  {
+    name: "Sunday", short: "Sun", label: "Rest", rest: true,
+    focus: "Rest & Recover"
+  }
+];
+
+const visuals = {
+  bench: `<svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="22" width="30" height="4" rx="2" fill="#E85D24" opacity="0.7"/><rect x="1" y="26" width="4" height="8" rx="2" fill="#888" opacity="0.5"/><rect x="33" y="26" width="4" height="8" rx="2" fill="#888" opacity="0.5"/><circle cx="19" cy="14" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="19" x2="19" y2="22" stroke="#888" stroke-width="1.5"/><line x1="15" y1="22" x2="19" y2="26" stroke="#888" stroke-width="1.5"/><line x1="23" y1="22" x2="19" y2="26" stroke="#888" stroke-width="1.5"/><rect x="8" y="20" width="5" height="3" rx="1.5" fill="#E85D24" opacity="0.5"/><rect x="25" y="20" width="5" height="3" rx="1.5" fill="#E85D24" opacity="0.5"/></svg>`,
+  incline: `<svg viewBox="0 0 38 38" fill="none"><rect x="4" y="18" width="22" height="4" rx="2" transform="rotate(-20 4 18)" fill="#E85D24" opacity="0.7"/><circle cx="22" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="22" y1="15" x2="22" y2="20" stroke="#888" stroke-width="1.5"/><rect x="1" y="28" width="36" height="5" rx="2" fill="#888" opacity="0.3"/></svg>`,
+  fly: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="15" x2="19" y2="20" stroke="#888" stroke-width="1.5"/><line x1="7" y1="20" x2="31" y2="20" stroke="#888" stroke-width="1.5"/><circle cx="7" cy="23" r="3" fill="#E85D24" opacity="0.5"/><circle cx="31" cy="23" r="3" fill="#E85D24" opacity="0.5"/><path d="M7 20 Q19 28 31 20" stroke="#E85D24" stroke-width="1" stroke-dasharray="2 2" fill="none"/></svg>`,
+  dip: `<svg viewBox="0 0 38 38" fill="none"><rect x="4" y="14" width="4" height="20" rx="2" fill="#888" opacity="0.5"/><rect x="30" y="14" width="4" height="20" rx="2" fill="#888" opacity="0.5"/><circle cx="19" cy="9" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="14" x2="19" y2="20" stroke="#888" stroke-width="1.5"/><line x1="10" y1="19" x2="28" y2="19" stroke="#888" stroke-width="1.5"/><line x1="10" y1="14" x2="10" y2="19" stroke="#888" stroke-width="1.5"/><line x1="28" y1="14" x2="28" y2="19" stroke="#888" stroke-width="1.5"/></svg>`,
+  machine_press: `<svg viewBox="0 0 38 38" fill="none"><rect x="6" y="14" width="26" height="16" rx="4" fill="none" stroke="#E85D24" stroke-width="1.5" opacity="0.7"/><circle cx="19" cy="9" r="4" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="13" x2="19" y2="14" stroke="#888" stroke-width="1.5"/><line x1="9" y1="18" x2="29" y2="18" stroke="#E85D24" stroke-width="1" opacity="0.5"/></svg>`,
+  deadlift: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="8" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="13" x2="19" y2="26" stroke="#888" stroke-width="1.5"/><line x1="14" y1="26" x2="24" y2="26" stroke="#888" stroke-width="1.5"/><line x1="14" y1="26" x2="12" y2="33" stroke="#888" stroke-width="1.5"/><line x1="24" y1="26" x2="26" y2="33" stroke="#888" stroke-width="1.5"/><rect x="6" y="30" width="6" height="3" rx="1.5" fill="#E85D24" opacity="0.6"/><rect x="26" y="30" width="6" height="3" rx="1.5" fill="#E85D24" opacity="0.6"/></svg>`,
+  pulldown: `<svg viewBox="0 0 38 38" fill="none"><rect x="2" y="3" width="34" height="4" rx="2" fill="#888" opacity="0.5"/><circle cx="19" cy="18" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="7" x2="19" y2="13" stroke="#888" stroke-width="1.5"/><line x1="8" y1="7" x2="30" y2="7" stroke="#E85D24" stroke-width="1" opacity="0.5"/><line x1="8" y1="7" x2="8" y2="18" stroke="#888" stroke-width="1" opacity="0.5"/><line x1="30" y1="7" x2="30" y2="18" stroke="#888" stroke-width="1" opacity="0.5"/></svg>`,
+  row: `<svg viewBox="0 0 38 38" fill="none"><circle cx="10" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="10" y1="15" x2="10" y2="22" stroke="#888" stroke-width="1.5"/><line x1="6" y1="22" x2="14" y2="22" stroke="#888" stroke-width="1.5"/><line x1="6" y1="22" x2="5" y2="30" stroke="#888" stroke-width="1.5"/><line x1="14" y1="22" x2="14" y2="28" stroke="#888" stroke-width="1.5"/><line x1="14" y1="18" x2="32" y2="18" stroke="#E85D24" stroke-width="1.5"/><circle cx="34" cy="18" r="2.5" fill="#E85D24" opacity="0.6"/></svg>`,
+  db_row: `<svg viewBox="0 0 38 38" fill="none"><rect x="2" y="20" width="14" height="6" rx="3" fill="#888" opacity="0.4"/><circle cx="26" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="26" y1="15" x2="26" y2="22" stroke="#888" stroke-width="1.5"/><line x1="22" y1="22" x2="26" y2="28" stroke="#888" stroke-width="1.5"/><line x1="26" y1="18" x2="36" y2="18" stroke="#E85D24" stroke-width="1.5"/><circle cx="36" cy="18" r="2" fill="#E85D24" opacity="0.6"/></svg>`,
+  facepull: `<svg viewBox="0 0 38 38" fill="none"><circle cx="10" cy="14" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M10 14 Q24 10 34 16" stroke="#888" stroke-width="1.5" fill="none"/><path d="M10 14 Q24 18 34 16" stroke="#888" stroke-width="1.5" fill="none"/><rect x="34" y="13" width="3" height="6" rx="1.5" fill="#E85D24" opacity="0.6"/></svg>`,
+  ohp: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="14" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="19" x2="19" y2="25" stroke="#888" stroke-width="1.5"/><line x1="14" y1="25" x2="24" y2="25" stroke="#888" stroke-width="1.5"/><line x1="14" y1="25" x2="13" y2="33" stroke="#888" stroke-width="1.5"/><line x1="24" y1="25" x2="25" y2="33" stroke="#888" stroke-width="1.5"/><line x1="8" y1="10" x2="30" y2="10" stroke="#E85D24" stroke-width="2" opacity="0.7"/><circle cx="8" cy="10" r="2.5" fill="#E85D24" opacity="0.5"/><circle cx="30" cy="10" r="2.5" fill="#E85D24" opacity="0.5"/><line x1="14" y1="19" x2="8" y2="10" stroke="#888" stroke-width="1" opacity="0.5"/><line x1="24" y1="19" x2="30" y2="10" stroke="#888" stroke-width="1" opacity="0.5"/></svg>`,
+  lateral: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="15" x2="19" y2="24" stroke="#888" stroke-width="1.5"/><line x1="14" y1="24" x2="24" y2="24" stroke="#888" stroke-width="1.5"/><line x1="14" y1="24" x2="13" y2="33" stroke="#888" stroke-width="1.5"/><line x1="24" y1="24" x2="25" y2="33" stroke="#888" stroke-width="1.5"/><line x1="14" y1="20" x2="5" y2="22" stroke="#E85D24" stroke-width="1.5"/><circle cx="5" cy="22" r="2" fill="#E85D24" opacity="0.6"/><line x1="24" y1="20" x2="33" y2="22" stroke="#E85D24" stroke-width="1.5"/><circle cx="33" cy="22" r="2" fill="#E85D24" opacity="0.6"/></svg>`,
+  rear_delt: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="15" x2="19" y2="24" stroke="#888" stroke-width="1.5"/><line x1="14" y1="24" x2="24" y2="24" stroke="#888" stroke-width="1.5"/><line x1="14" y1="24" x2="13" y2="33" stroke="#888" stroke-width="1.5"/><line x1="24" y1="24" x2="25" y2="33" stroke="#888" stroke-width="1.5"/><path d="M14 17 Q8 20 6 26" stroke="#E85D24" stroke-width="1.5" fill="none"/><path d="M24 17 Q30 20 32 26" stroke="#E85D24" stroke-width="1.5" fill="none"/></svg>`,
+  arnold: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="15" x2="19" y2="24" stroke="#888" stroke-width="1.5"/><line x1="14" y1="24" x2="24" y2="24" stroke="#888" stroke-width="1.5"/><line x1="14" y1="24" x2="13" y2="33" stroke="#888" stroke-width="1.5"/><line x1="24" y1="24" x2="25" y2="33" stroke="#888" stroke-width="1.5"/><path d="M14 19 Q8 12 10 7" stroke="#E85D24" stroke-width="1.5" fill="none"/><path d="M24 19 Q30 12 28 7" stroke="#E85D24" stroke-width="1.5" fill="none"/></svg>`,
+  bbcurl: `<svg viewBox="0 0 38 38" fill="none"><circle cx="14" cy="9" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="14" y1="14" x2="14" y2="20" stroke="#888" stroke-width="1.5"/><path d="M14 20 Q16 28 22 26" stroke="#888" stroke-width="1.5" fill="none"/><rect x="8" y="24" width="28" height="3" rx="1.5" fill="#E85D24" opacity="0.6"/></svg>`,
+  skull: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="8" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M19 13 L19 22 L14 30" stroke="#888" stroke-width="1.5" fill="none"/><path d="M19 22 L24 30" stroke="#888" stroke-width="1.5" fill="none"/><line x1="8" y1="16" x2="30" y2="16" stroke="#E85D24" stroke-width="2" opacity="0.6"/></svg>`,
+  incline_curl: `<svg viewBox="0 0 38 38" fill="none"><rect x="4" y="18" width="18" height="4" rx="2" transform="rotate(-25 4 18)" fill="#888" opacity="0.4"/><circle cx="22" cy="8" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M22 13 L20 20" stroke="#888" stroke-width="1.5"/><path d="M20 20 Q24 27 22 31" stroke="#E85D24" stroke-width="1.5" fill="none"/><circle cx="32" cy="28" r="2.5" fill="#E85D24" opacity="0.6"/></svg>`,
+  pushdown: `<svg viewBox="0 0 38 38" fill="none"><rect x="15" y="2" width="8" height="4" rx="2" fill="#888" opacity="0.5"/><circle cx="12" cy="20" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M19 6 Q26 12 16 15" stroke="#888" stroke-width="1.5" fill="none"/><path d="M16 25 L12 32 L8 32" stroke="#888" stroke-width="1.5" fill="none"/><path d="M16 25 L20 32 L24 32" stroke="#888" stroke-width="1.5" fill="none"/></svg>`,
+  hammer: `<svg viewBox="0 0 38 38" fill="none"><circle cx="14" cy="9" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="14" y1="14" x2="14" y2="20" stroke="#888" stroke-width="1.5"/><path d="M14 20 Q16 28 14 32" stroke="#888" stroke-width="1.5" fill="none"/><circle cx="22" cy="26" r="4" fill="none" stroke="#E85D24" stroke-width="1.5" opacity="0.7"/></svg>`,
+  overhead_tri: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="6" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M19 11 L19 18 L14 26 L24 26" stroke="#888" stroke-width="1.5" fill="none"/><rect x="8" y="5" width="22" height="3" rx="1.5" fill="#E85D24" opacity="0.6"/></svg>`,
+  squat: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="6" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="10" y1="11" x2="28" y2="11" stroke="#E85D24" stroke-width="2" opacity="0.7"/><path d="M19 11 L17 24 L10 34" stroke="#888" stroke-width="1.5" fill="none"/><path d="M19 11 L21 24 L28 34" stroke="#888" stroke-width="1.5" fill="none"/></svg>`,
+  rdl: `<svg viewBox="0 0 38 38" fill="none"><circle cx="10" cy="8" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M10 13 L10 26 L22 34" stroke="#888" stroke-width="1.5" fill="none"/><path d="M10 26 L14 34" stroke="#888" stroke-width="1.5" fill="none"/><line x1="10" y1="22" x2="32" y2="22" stroke="#E85D24" stroke-width="1.5" opacity="0.6"/><circle cx="32" cy="22" r="2.5" fill="#E85D24" opacity="0.5"/></svg>`,
+  legpress: `<svg viewBox="0 0 38 38" fill="none"><rect x="3" y="26" width="32" height="8" rx="3" fill="#888" opacity="0.3"/><circle cx="12" cy="14" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M12 19 L10 26 L20 26" stroke="#888" stroke-width="1.5" fill="none"/><line x1="20" y1="22" x2="35" y2="22" stroke="#E85D24" stroke-width="2" opacity="0.6"/></svg>`,
+  legcurl: `<svg viewBox="0 0 38 38" fill="none"><rect x="3" y="18" width="32" height="6" rx="3" fill="#888" opacity="0.3"/><circle cx="14" cy="10" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><path d="M14 15 L14 18 L26 18 L34 26" stroke="#888" stroke-width="1.5" fill="none"/></svg>`,
+  calf: `<svg viewBox="0 0 38 38" fill="none"><circle cx="19" cy="7" r="5" fill="none" stroke="#E85D24" stroke-width="1.5"/><line x1="19" y1="12" x2="19" y2="22" stroke="#888" stroke-width="1.5"/><line x1="14" y1="22" x2="24" y2="22" stroke="#888" stroke-width="1.5"/><line x1="14" y1="22" x2="14" y2="34" stroke="#888" stroke-width="1.5"/><line x1="24" y1="22" x2="24" y2="34" stroke="#888" stroke-width="1.5"/><line x1="10" y1="30" x2="18" y2="34" stroke="#E85D24" stroke-width="1.5"/><line x1="20" y1="30" x2="28" y2="34" stroke="#E85D24" stroke-width="1.5"/></svg>`,
+};
+
+function getToday() {
+  const d = new Date().getDay();
+  if (d === 0) return 6;
+  return d - 1;
+}
+
+let activeDay = Math.min(getToday(), 6);
+let expandedExercise = null;
+
+function renderTabs() {
+  const container = document.getElementById('day-tabs');
+  container.innerHTML = '';
+  days.forEach((day, i) => {
+    const tab = document.createElement('div');
+    const isToday = i === getToday();
+    tab.className = `day-tab${i === activeDay ? ' active' : ''}${day.rest ? ' rest-tab' : ''}`;
+    tab.innerHTML = `${day.short}${isToday ? ' <span class="today-badge" style="font-size:8px;padding:1px 4px;">Today</span>' : ''}`;
+    tab.onclick = () => { activeDay = i; expandedExercise = null; renderTabs(); renderContent(); };
+    container.appendChild(tab);
+  });
+}
+
+function renderContent() {
+  const day = days[activeDay];
+  const container = document.getElementById('day-content');
+
+  if (day.rest) {
+    container.innerHTML = `
+      <div class="rest-screen">
+        <div class="rest-icon">🛌</div>
+        <div class="rest-title">${day.name} — Rest Day</div>
+        <div class="rest-tip">Your muscles grow during recovery. Get 7–9 hours of sleep, stay hydrated, and consider a light walk or stretching session.</div>
+        <div style="margin-top:2rem;padding:1rem;background:var(--card);border-radius:10px;border:0.5px solid var(--border);text-align:left;max-width:300px;margin-left:auto;margin-right:auto;">
+          <div class="section-label">Recomp tip for today</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;">Aim for 0.7–1g of protein per lb of bodyweight. At 165 lbs that's ~120–165g daily to preserve muscle while in a deficit.</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const totalSets = day.exercises.reduce((s, e) => s + parseInt(e.sets), 0);
+
+  let html = `
+    <div class="day-header">
+      <div>
+        <div class="day-title">${day.name}</div>
+        <div class="day-focus">${day.focus}</div>
+      </div>
+      <div class="day-meta">
+        <div class="day-sets">${day.exercises.length} exercises</div>
+        <div class="day-sets">${totalSets} total sets</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);background:var(--card);border-radius:8px;padding:8px 10px;margin-bottom:1rem;border-left:2px solid var(--accent2);">${day.tip_day}</div>
+    <div class="section-label">Exercises — tap to expand</div>
+    <div class="exercises">`;
+
+  day.exercises.forEach((ex, i) => {
+    const expanded = expandedExercise === i;
+    html += `
+      <div class="exercise-card${expanded ? ' expanded' : ''}" onclick="toggleExercise(${i})">
+        <div class="exercise-row">
+          <div class="exercise-img">${visuals[ex.visual] || ''}</div>
+          <div class="exercise-info">
+            <div class="exercise-name">${ex.name}</div>
+            <div class="exercise-sets">${ex.sets} sets × ${ex.reps} reps · Rest ${ex.rest}</div>
+            <div class="muscle-tags">${ex.muscles.map(m => `<span class="muscle-tag">${m}</span>`).join('')}</div>
+          </div>
+          <div class="chevron">▼</div>
+        </div>
+        ${expanded ? `
+        <div class="exercise-detail">
+          <div class="detail-grid">
+            <div class="detail-stat"><div class="detail-stat-label">Sets</div><div class="detail-stat-val">${ex.sets}</div></div>
+            <div class="detail-stat"><div class="detail-stat-label">Reps</div><div class="detail-stat-val">${ex.reps}</div></div>
+            <div class="detail-stat"><div class="detail-stat-label">Rest</div><div class="detail-stat-val">${ex.rest}</div></div>
+            <div class="detail-stat"><div class="detail-stat-label">Target</div><div class="detail-stat-val" style="font-size:13px;">${ex.muscles[0]}</div></div>
+          </div>
+          <div class="tip-box"><div class="tip-label">Form tip</div>${ex.tip}</div>
+        </div>` : ''}
+      </div>`;
+  });
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function toggleExercise(i) {
+  expandedExercise = expandedExercise === i ? null : i;
+  renderContent();
+}
+
+renderTabs();
+renderContent();
+</script>
